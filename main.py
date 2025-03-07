@@ -411,7 +411,7 @@ class FormularioEditarMueble(QWidget):
         self.setLayout(self.layout)
 
     def borrar_mueble(self):
-        self.ventana_muebles.libros.remove(self.mueble)
+        self.ventana_muebles.muebles.remove(self.mueble)
         self.ventana_muebles.lista_muebles.clear()
         self.ventana_muebles.lista_muebles.addItems([str(mueble) for mueble in self.ventana_muebles.muebles])
         self.close()
