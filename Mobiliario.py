@@ -1,4 +1,4 @@
-class Llibre:
+class Mobiliario:
     def __init__(self,nom, cuantitat, tamany, pes):
         self.nom = nom
         self.cuantitat = cuantitat

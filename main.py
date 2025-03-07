@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
 from Llibre import Llibre
+from Mobiliario import Mobiliario
 
 class MenuPrincipal(QWidget):
     def __init__(self):
@@ -346,9 +347,9 @@ class FormularioMobiliario(QWidget):
 
         # Campos para el formulario
         self.nom_input = QLineEdit()
-        self.cuantitat = QLineEdit()
-        self.tamany = QLineEdit()
-        self.pes = QLineEdit()
+        self.cuantitat_input = QLineEdit()
+        self.tamany_input = QLineEdit()
+        self.pes_input = QLineEdit()
 
         # Añadir campos al formulario
         self.layout.addWidget(QLabel("Nombre:"))
@@ -371,6 +372,24 @@ class FormularioMobiliario(QWidget):
         self.layout.addWidget(self.boton_guardar)
 
         self.setLayout(self.layout)
+
+    def guardar_mueble(self):
+        nom = self.nom_input.text()
+        cuantitat = self.cuantitat_input.text()
+        tamany = self.tamany_input.text()
+        pes = self.pes_input.text()
+
+        mueble = Mobiliario(nom, cuantitat, tamany, pes)
+        self.muebles.muebles.append(mueble)
+
+        QMessageBox.information(self, "Mueble Guardado", f"Se guardó {mueble.nom}")
+
+        # Al enviar el formulario con el clear los campos se vacian por si quieres añadir un nuevo libro.
+        self.nom_input.clear()
+        self.cuantitat_input.clear()
+        self.tamany_input.clear()
+        self.pes_input.clear()
+
 
 # Bloque para ejecutar la aplicación correctamente
 if __name__ == "__main__":
