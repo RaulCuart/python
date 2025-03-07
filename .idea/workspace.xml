@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9f89edc8-b5b9-4083-a0eb-eed088ef63fd" name="Changes" comment="Crear Muebles implementado">
+    <list default="true" id="9f89edc8-b5b9-4083-a0eb-eed088ef63fd" name="Changes" comment="he quitado un espacio">
+      <change beforePath="$PROJECT_DIR$/.idea/Biblioteca.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Biblioteca.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
@@ -76,7 +78,7 @@
       <option name="presentableId" value="Default" />
       <updated>1741348492490</updated>
       <workItem from="1741348493329" duration="108000" />
-      <workItem from="1741348985013" duration="3968000" />
+      <workItem from="1741348985013" duration="6666000" />
     </task>
     <task id="LOCAL-00001" summary="print">
       <option name="closed" value="true" />
@@ -110,7 +112,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741352320985</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="he quitado un espacio">
+      <option name="closed" value="true" />
+      <created>1741353004796</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1741353004796</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -121,9 +131,10 @@
     <MESSAGE value="Mobiliario.py creado" />
     <MESSAGE value="Mobiliario mal" />
     <MESSAGE value="Crear Muebles implementado" />
-    <option name="LAST_COMMIT_MESSAGE" value="Crear Muebles implementado" />
+    <MESSAGE value="he quitado un espacio" />
+    <option name="LAST_COMMIT_MESSAGE" value="he quitado un espacio" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/python$main.coverage" NAME="main Coverage Results" MODIFIED="1741352342345" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/python$main.coverage" NAME="main Coverage Results" MODIFIED="1741358734051" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

@@ -52,13 +52,13 @@ class Muebles(QWidget):
         self.formulario = FormularioMobiliario(self)
         self.formulario.show()
 
+    def ver_muebles(self):
+        self.ventana_muebles = VerMuebles(self.muebles)
+        self.ventana_muebles.show()
+
     def abrir_ventana_csv(self):
         self.ventana_csv = Menu_CSV()
         self.ventana_csv.show()
-
-    def ver_muebles(self):
-        QMessageBox.information(self,"Ver muebles", "Se ha pulsado el boton de ver muebles")
-
 
 class MenuPrestamos(QWidget):
     def __init__(self):
@@ -94,7 +94,6 @@ class MenuPrestamos(QWidget):
     def devolver_libro(self):
         print("Función para devolver un libro")
         # Aquí puedes implementar la lógica para registrar la devolución de un libro
-
 
 # Ventana para gestionar libros (Añadir y Ver)
 class Biblioteca(QWidget):
@@ -272,6 +271,66 @@ class FormularioEditarLibro(QWidget):
         # Cerrar el formulario
         self.close()
 
+class FormularioEditarMueble(QWidget):
+    def __init__(self, mueble, ventana_muebles):
+        super().__init__()
+
+        self.mueble = mueble
+        self.ventana_muebles = ventana_muebles  # Para actualizar la lista después de editar
+        self.setWindowTitle(f"Editar {mueble.nom}")
+        self.setGeometry(400, 100, 400, 400)
+
+        # Crear layout
+        self.layout = QVBoxLayout()
+
+        # Campos de formulario prellenados con los valores actuales del libro
+        self.nom_input = QLineEdit(mueble.nom)
+        self.cuantitat_input = QLineEdit(mueble.cuantitat)
+        self.tamany_input = QLineEdit(mueble.tamany)
+        self.pes_input = QLineEdit(mueble.pes)
+
+        # Añadir los campos al formulario
+        self.layout.addWidget(QLabel("Nombre:"))
+        self.layout.addWidget(self.nom_input)
+        self.layout.addWidget(QLabel("Cantidad:"))
+        self.layout.addWidget(self.cuantitat_input)
+        self.layout.addWidget(QLabel("Tamaño:"))
+        self.layout.addWidget(self.tamany_input)
+        self.layout.addWidget(QLabel("Peso:"))
+        self.layout.addWidget(self.pes_input)
+
+        # Botón para guardar cambios
+        self.boton_guardar = QPushButton("Guardar Cambios")
+        self.boton_guardar.clicked.connect(self.guardar_cambios)
+
+        self.boton_borrar = QPushButton("Borrar Mueble")
+        self.boton_borrar.clicked.connect(self.borrar_mueble)
+
+        self.layout.addWidget(self.boton_borrar)
+        self.layout.addWidget(self.boton_guardar)
+
+        self.setLayout(self.layout)
+
+    def borrar_mueble(self):
+        self.ventana_muebles.libros.remove(self.mueble)
+        self.ventana_muebles.lista_muebles.clear()
+        self.ventana_muebles.lista_muebles.addItems([str(mueble) for mueble in self.ventana_muebles.muebles])
+        self.close()
+
+    def guardar_cambios(self):
+        # Actualizamos los campos del mueble con los nuevos valores
+        self.mueble.nom = self.nom_input.text()
+        self.mueble.cuantitat = self.cuantitat_input.text()
+        self.mueble.tamany = self.tamany_input.text()
+        self.mueble.pes = self.pes_input.text()
+
+        # Actualizar la lista de muebles
+        self.ventana_muebles.lista_muebles.clear()
+        self.ventana_muebles.lista_muebles.addItems([str(mueble) for mueble in self.ventana_muebles.muebles])
+
+        # Cerrar el formulario
+        self.close()
+
 class Menu_CSV(QWidget):
     def __init__(self):
         super().__init__()
@@ -434,6 +493,37 @@ class FormularioMobiliario(QWidget):
         self.cuantitat_input.clear()
         self.tamany_input.clear()
         self.pes_input.clear()
+
+class VerMuebles(QWidget):
+    def __init__(self, muebles):
+        super().__init__()
+
+        self.muebles = muebles  # Guardamos la lista de muebles
+        self.setWindowTitle("Lista de Muebles")
+        self.setGeometry(400, 100, 1400, 800)
+
+        # Crear layout
+        self.layout = QVBoxLayout()
+
+        # Crear un QListWidget para mostrar los libros
+        self.lista_muebles = QListWidget()
+        self.lista_muebles.addItems([str(mueble) for mueble in muebles])  # Mostrar muebles usando el __str__
+
+        # Conectar el evento de clic en un libro
+        self.lista_muebles.itemClicked.connect(self.editar_muebles)
+
+        # Añadir la lista al layout
+        self.layout.addWidget(self.lista_muebles)
+        self.setLayout(self.layout)
+
+    def editar_muebles(self, item):
+        # Buscar el mueble que corresponde al item seleccionado
+        mueble_seleccionado = next((mueble for mueble in self.muebles if str(mueble) == item.text()), None)
+
+        if mueble_seleccionado:
+            # Mostrar el formulario de edición
+            self.formulario_editar = FormularioEditarMueble(mueble_seleccionado, self)
+            self.formulario_editar.show()
 
 
 # Bloque para ejecutar la aplicación correctamente
