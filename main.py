@@ -30,6 +30,8 @@ class MenuPrincipal(QWidget):
 class Muebles(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.muebles = []
         self.setWindowTitle("Muebles")
         self.setGeometry(800, 300, 400, 400)
         self.layout = QVBoxLayout()
@@ -45,7 +47,13 @@ class Muebles(QWidget):
         self.setLayout(self.layout)
 
     def anadir_mueble(self):
-        QMessageBox.information(self, "Añadir muebles", "Se ha pulsado el boton de añadir muebles")
+        #QMessageBox.information(self, "Añadir muebles", "Se ha pulsado el boton de añadir muebles")
+        self.formulario = FormularioMobiliario(self)
+        self.formulario.show()
+
+    def abrir_ventana_csv(self):
+        self.ventana_csv = Menu_CSV()
+        self.ventana_csv.show()
 
     def ver_muebles(self):
         QMessageBox.information(self,"Ver muebles", "Se ha pulsado el boton de ver muebles")
@@ -343,6 +351,46 @@ class FormularioLibro(QWidget):
         self.fila_input.clear()
         self.columna_input.clear()
 
+class FormularioMobiliario(QWidget):
+    def __init__(self, muebles):
+        super().__init__()
+
+        self.setWindowTitle("Añadir Muebles")
+        self.setGeometry(800, 300, 400, 400)
+
+        # Referencia a la clase mueble para agregar muebles
+        self.muebles = muebles
+
+        # Crear layout
+        self.layout = QVBoxLayout()
+
+        # Campos para el formulario
+        self.nom_input = QLineEdit()
+        self.cuantitat = QLineEdit()
+        self.tamany = QLineEdit()
+        self.pes = QLineEdit()
+
+        # Añadir campos al formulario
+        self.layout.addWidget(QLabel("Nombre:"))
+        self.layout.addWidget(self.nom_input)
+
+        self.layout.addWidget(QLabel("Cantidad:"))
+        self.layout.addWidget(self.cuantitat_input)
+
+        self.layout.addWidget(QLabel("Tamaño:"))
+        self.layout.addWidget(self.tamany_input)
+
+        self.layout.addWidget(QLabel("Peso:"))
+        self.layout.addWidget(self.pes_input)
+
+
+        # Botón para guardar el mueble
+        self.boton_guardar = QPushButton("Guardar Mueble")
+        self.boton_guardar.clicked.connect(self.guardar_mueble)
+
+        self.layout.addWidget(self.boton_guardar)
+
+        self.setLayout(self.layout)
 
 # Bloque para ejecutar la aplicación correctamente
 if __name__ == "__main__":
