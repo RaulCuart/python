@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import *
 from Llibre import Llibre
 from Mobiliario import Mobiliario
+from Prestamo import Prestamo
 
 class MenuPrincipal(QWidget):
     def __init__(self):
@@ -61,10 +62,15 @@ class Muebles(QWidget):
         self.ventana_csv.show()
 
 class MenuPrestamos(QWidget):
-    def __init__(self):
+    def __init__(self,libros,prestamos,biblioteca):
         super().__init__()
         self.setWindowTitle("Menú de Préstamos")
         self.setGeometry(800, 300, 400, 400)
+
+
+        self.prestamos = prestamos
+        self.libros = libros
+        self.biblioteca = biblioteca
 
         self.layout = QVBoxLayout()
 
@@ -84,16 +90,147 @@ class MenuPrestamos(QWidget):
         self.setLayout(self.layout)
 
     def alquilar(self):
-        print("Función para crear un préstamo")
+        self.ventana_prestamos = FormularioPrestamo(self, self.libros, self.prestamos)  # Cambia aquí
+        self.ventana_prestamos.show()
+        self.biblioteca.prestamos = self.prestamos
 
 
     def ver_prestamos(self):
-        print("Función para ver préstamos")
-        # Aquí puedes mostrar una lista de préstamos registrados
+        self.ventana_ver_prestamos = VerPrestamos(self.prestamos,self)
+        self.ventana_ver_prestamos.show()
+        self.biblioteca.prestamos = self.prestamos
+
 
     def devolver_libro(self):
         print("Función para devolver un libro")
         # Aquí puedes implementar la lógica para registrar la devolución de un libro
+        self.biblioteca.prestamos = self.prestamos
+
+
+class VerPrestamos(QWidget):
+    def __init__(self, prestamos, menu_prestamos): #añadimos menu_prestamos para poder actualizar la lista
+        super().__init__()
+
+        self.prestamos = prestamos
+        self.setWindowTitle("Lista de Préstamos")
+        self.setGeometry(400, 100, 600, 400)
+        self.menu_prestamos = menu_prestamos
+
+        self.layout = QVBoxLayout()
+
+        self.lista_prestamos = QListWidget()
+        self.lista_prestamos.addItems([str(prestamo) for prestamo in prestamos])
+        self.lista_prestamos.itemClicked.connect(self.editar_prestamo) #conectar evento
+
+        self.layout.addWidget(self.lista_prestamos)
+        self.setLayout(self.layout)
+
+    def editar_prestamo(self, item):
+        prestamo_seleccionado = next((prestamo for prestamo in self.prestamos if str(prestamo) == item.text()), None)
+
+        if prestamo_seleccionado:
+            self.formulario_editar = FormularioEditarPrestamo(prestamo_seleccionado, self)
+            self.formulario_editar.show()
+
+class FormularioEditarPrestamo(QWidget):
+    def __init__(self, prestamo, ventana_prestamos):
+        super().__init__()
+
+        self.prestamo = prestamo
+        self.ventana_prestamos = ventana_prestamos
+        self.setWindowTitle(f"Editar Préstamo de {prestamo.llibre}")
+        self.setGeometry(400, 100, 400, 400)
+
+        self.layout = QVBoxLayout()
+
+        self.usuario_input = QLineEdit(prestamo.alquilador)
+        self.libro_input = QLineEdit(prestamo.llibre)
+        self.fecha_devolucion_input = QLineEdit(prestamo.fechaFin)
+
+        self.layout.addWidget(QLabel("Usuario:"))
+        self.layout.addWidget(self.usuario_input)
+        self.layout.addWidget(QLabel("Libro:"))
+        self.layout.addWidget(self.libro_input)
+        self.layout.addWidget(QLabel("Fecha de Devolución:"))
+        self.layout.addWidget(self.fecha_devolucion_input)
+
+        self.boton_guardar = QPushButton("Guardar Cambios")
+        self.boton_guardar.clicked.connect(self.guardar_cambios)
+
+        self.boton_borrar = QPushButton("Borrar Préstamo")
+        self.boton_borrar.clicked.connect(self.borrar_prestamo)
+
+        self.layout.addWidget(self.boton_borrar)
+        self.layout.addWidget(self.boton_guardar)
+
+        self.setLayout(self.layout)
+
+    def borrar_prestamo(self):
+        self.ventana_prestamos.menu_prestamos.prestamos.remove(self.prestamo)
+        self.ventana_prestamos.lista_prestamos.clear()
+        self.ventana_prestamos.lista_prestamos.addItems(
+            [str(prestamo) for prestamo in self.ventana_prestamos.menu_prestamos.prestamos])
+        for libro in self.ventana_prestamos.menu_prestamos.libros:
+            if libro.nom == self.prestamo.llibre:
+                libro.enPrestec = "No"
+                break
+        self.close()
+        self.ventana_prestamos.menu_prestamos.biblioteca.prestamos = self.ventana_prestamos.menu_prestamos.prestamos
+
+    def guardar_cambios(self):
+        self.prestamo.alquilador = self.usuario_input.text()
+        self.prestamo.llibre = self.libro_input.text()
+        self.prestamo.fechaFin = self.fecha_devolucion_input.text()
+
+        self.ventana_prestamos.lista_prestamos.clear()
+        self.ventana_prestamos.lista_prestamos.addItems([str(prestamo) for prestamo in self.ventana_prestamos.menu_prestamos.prestamos])
+        self.close()
+        self.ventana_prestamos.menu_prestamos.biblioteca.prestamos = self.ventana_prestamos.menu_prestamos.prestamos
+
+class FormularioPrestamo(QWidget):
+    def __init__(self, gestion_prestamos, libros, prestamos):
+        super().__init__()
+        self.setWindowTitle("Afegir Préstec")
+        self.setGeometry(800, 300, 400, 400)
+
+        self.gestion_prestamos = gestion_prestamos
+        self.libros = libros
+        self.prestamos = prestamos
+
+        self.layout = QVBoxLayout()
+
+        self.libro_combo = QComboBox()
+        self.libro_combo.addItems([libro.nom for libro in libros])
+
+        self.usuario_input = QLineEdit()
+        self.fecha_devolucion_input = QLineEdit()
+
+        self.layout.addWidget(QLabel("Llibre:"))
+        self.layout.addWidget(self.libro_combo)
+        self.layout.addWidget(QLabel("Usuari:"))
+        self.layout.addWidget(self.usuario_input)
+        self.layout.addWidget(QLabel("Data de Devolució:"))
+        self.layout.addWidget(self.fecha_devolucion_input)
+
+        self.boton_guardar = QPushButton("Guardar Préstec")
+        self.boton_guardar.clicked.connect(self.guardar_prestamo)
+
+        self.layout.addWidget(self.boton_guardar)
+
+        self.setLayout(self.layout)
+
+    def guardar_prestamo(self):
+        libro_seleccionado = self.libro_combo.currentText()
+        usuario = self.usuario_input.text()
+        fecha_devolucion = self.fecha_devolucion_input.text()
+        prestamo = Prestamo(usuario, libro_seleccionado, fecha_devolucion)
+        self.prestamos.append(prestamo)
+        for libro in self.libros:
+            if libro.nom == libro_seleccionado:
+                libro.enPrestec = "En prestec"
+                break
+        self.close()
+        self.gestion_prestamos.biblioteca.prestamos = self.prestamos
 
 # Ventana para gestionar libros (Añadir y Ver)
 class Biblioteca(QWidget):
@@ -101,8 +238,10 @@ class Biblioteca(QWidget):
         super().__init__()
 
         self.libros = []
+        self.prestamos = []
         self.setWindowTitle("Gestión de Libros")
         self.setGeometry(800, 300, 400, 400)
+
 
         # Crear layout
         self.layout = QVBoxLayout()
@@ -118,22 +257,16 @@ class Biblioteca(QWidget):
         self.boton_prestamos = QPushButton("Prestamos")
         self.boton_prestamos.clicked.connect(self.menu_prestamos)
 
-        self.boton_csv = QPushButton("CSV")
-        self.boton_csv.clicked.connect(self.abrir_ventana_csv)
 
-        self.boton_graficos = QPushButton("Graficos")
-        self.boton_graficos.clicked.connect(self.abrir_graficos)
 
         # Añadir botones al layout
         self.layout.addWidget(self.boton_anadir)
         self.layout.addWidget(self.boton_ver)
-        self.layout.addWidget(self.boton_graficos)
-        self.layout.addWidget(self.boton_csv)
         self.layout.addWidget(self.boton_prestamos)
         self.setLayout(self.layout)
 
     def menu_prestamos(self):
-        self.prestamos = MenuPrestamos()
+        self.prestamos = MenuPrestamos(self.libros,self.prestamos, self)
         self.prestamos.show()
 
 
@@ -144,13 +277,6 @@ class Biblioteca(QWidget):
     def ver_libros(self):
         self.ventana_libros = VerLibros(self.libros)
         self.ventana_libros.show()
-
-    def abrir_ventana_csv(self):
-        self.ventana_csv = Menu_CSV()
-        self.ventana_csv.show()
-
-    def abrir_graficos(self):
-        QMessageBox.information(self,"Graficos", "Se ha pulsado el boton para ver los graficos")
 
 class VerLibros(QWidget):
     def __init__(self, libros):
@@ -223,8 +349,6 @@ class FormularioEditarLibro(QWidget):
         self.layout.addWidget(self.dataPublicacio_input)
         self.layout.addWidget(QLabel("Edicion:"))
         self.layout.addWidget(self.edicio_input)
-        self.layout.addWidget(QLabel("En Prestamo:"))
-        self.layout.addWidget(self.enPrestec_input)
         self.layout.addWidget(QLabel("Estantería:"))
         self.layout.addWidget(self.estanteria_input)
         self.layout.addWidget(QLabel("Fila:"))
@@ -259,7 +383,6 @@ class FormularioEditarLibro(QWidget):
         self.libro.sinopsis = self.sinopsis_input.text()
         self.libro.dataPublicacio = self.dataPublicacio_input.text()
         self.libro.edicio = self.edicio_input.text()
-        self.libro.enPrestec = self.enPrestec_input.text()
         self.libro.estanteria = self.estanteria_input.text()
         self.libro.fila = self.fila_input.text()
         self.libro.columna = self.columna_input.text()
@@ -385,9 +508,6 @@ class FormularioLibro(QWidget):
         self.layout.addWidget(QLabel("Edicion:"))
         self.layout.addWidget(self.edicio_input)
 
-        self.layout.addWidget(QLabel("En Prestamo:"))
-        self.layout.addWidget(self.enPrestec_input)
-
         self.layout.addWidget(QLabel("Estantería:"))
         self.layout.addWidget(self.estanteria_input)
 
@@ -413,7 +533,7 @@ class FormularioLibro(QWidget):
         sinopsis = self.sinopsis_input.text()
         dataPublicacio = self.dataPublicacio_input.text()
         edicio = self.edicio_input.text()
-        enPrestec = self.enPrestec_input.text()
+        enPrestec = "No"
         estanteria = self.estanteria_input.text()
         fila = self.fila_input.text()
         columna = self.columna_input.text()
