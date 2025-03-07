@@ -57,9 +57,6 @@ class Muebles(QWidget):
         self.ventana_muebles = VerMuebles(self.muebles)
         self.ventana_muebles.show()
 
-    def abrir_ventana_csv(self):
-        self.ventana_csv = Menu_CSV()
-        self.ventana_csv.show()
 
 class MenuPrestamos(QWidget):
     def __init__(self,libros,prestamos,biblioteca):
@@ -81,10 +78,6 @@ class MenuPrestamos(QWidget):
         self.boton_ver_prestamos = QPushButton("Ver Préstamos")
         self.boton_ver_prestamos.clicked.connect(self.ver_prestamos)
 
-        self.boton_devolver_libro = QPushButton("Devolver Libro")
-        self.boton_devolver_libro.clicked.connect(self.devolver_libro)
-
-        self.layout.addWidget(self.boton_devolver_libro)
         self.layout.addWidget(self.boton_crear_prestamo)
         self.layout.addWidget(self.boton_ver_prestamos)
         self.setLayout(self.layout)
@@ -99,13 +92,6 @@ class MenuPrestamos(QWidget):
         self.ventana_ver_prestamos = VerPrestamos(self.prestamos,self)
         self.ventana_ver_prestamos.show()
         self.biblioteca.prestamos = self.prestamos
-
-
-    def devolver_libro(self):
-        print("Función para devolver un libro")
-        # Aquí puedes implementar la lógica para registrar la devolución de un libro
-        self.biblioteca.prestamos = self.prestamos
-
 
 class VerPrestamos(QWidget):
     def __init__(self, prestamos, menu_prestamos): #añadimos menu_prestamos para poder actualizar la lista
@@ -200,7 +186,8 @@ class FormularioPrestamo(QWidget):
         self.layout = QVBoxLayout()
 
         self.libro_combo = QComboBox()
-        self.libro_combo.addItems([libro.nom for libro in libros])
+        libros_disponibles = [libro.nom for libro in libros if libro.enPrestec == "No"]
+        self.libro_combo.addItems(libros_disponibles)
 
         self.usuario_input = QLineEdit()
         self.fecha_devolucion_input = QLineEdit()
@@ -454,11 +441,6 @@ class FormularioEditarMueble(QWidget):
         # Cerrar el formulario
         self.close()
 
-class Menu_CSV(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Menu Csv")
-        self.setGeometry(800, 300, 400, 400)
 
 class FormularioLibro(QWidget):
     def __init__(self, biblioteca):
