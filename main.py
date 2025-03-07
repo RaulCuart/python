@@ -59,16 +59,42 @@ class Muebles(QWidget):
     def ver_muebles(self):
         QMessageBox.information(self,"Ver muebles", "Se ha pulsado el boton de ver muebles")
 
+
 class MenuPrestamos(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Menu Prestamos")
+        self.setWindowTitle("Menú de Préstamos")
         self.setGeometry(800, 300, 400, 400)
-        self.layout = QVBoxLayout()
-        self.label = QPushButton("Gestión de Préstamos")
-        self.layout.addWidget(self.label)
 
+        self.layout = QVBoxLayout()
+
+        self.boton_crear_prestamo = QPushButton("Alquilar un libro")
+        self.boton_crear_prestamo.clicked.connect(self.alquilar)
+
+
+        self.boton_ver_prestamos = QPushButton("Ver Préstamos")
+        self.boton_ver_prestamos.clicked.connect(self.ver_prestamos)
+
+        self.boton_devolver_libro = QPushButton("Devolver Libro")
+        self.boton_devolver_libro.clicked.connect(self.devolver_libro)
+
+        self.layout.addWidget(self.boton_devolver_libro)
+        self.layout.addWidget(self.boton_crear_prestamo)
+        self.layout.addWidget(self.boton_ver_prestamos)
         self.setLayout(self.layout)
+
+    def alquilar(self):
+        print("Función para crear un préstamo")
+
+
+    def ver_prestamos(self):
+        print("Función para ver préstamos")
+        # Aquí puedes mostrar una lista de préstamos registrados
+
+    def devolver_libro(self):
+        print("Función para devolver un libro")
+        # Aquí puedes implementar la lógica para registrar la devolución de un libro
+
 
 # Ventana para gestionar libros (Añadir y Ver)
 class Biblioteca(QWidget):
