@@ -59,6 +59,43 @@ class Muebles(QWidget):
     def ver_muebles(self):
         QMessageBox.information(self,"Ver muebles", "Se ha pulsado el boton de ver muebles")
 
+
+class MenuPrestamos(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Menú de Préstamos")
+        self.setGeometry(800, 300, 400, 400)
+
+        self.layout = QVBoxLayout()
+
+        self.boton_crear_prestamo = QPushButton("Alquilar un libro")
+        self.boton_crear_prestamo.clicked.connect(self.alquilar)
+
+
+        self.boton_ver_prestamos = QPushButton("Ver Préstamos")
+        self.boton_ver_prestamos.clicked.connect(self.ver_prestamos)
+
+        self.boton_devolver_libro = QPushButton("Devolver Libro")
+        self.boton_devolver_libro.clicked.connect(self.devolver_libro)
+
+        self.layout.addWidget(self.boton_devolver_libro)
+        self.layout.addWidget(self.boton_crear_prestamo)
+        self.layout.addWidget(self.boton_ver_prestamos)
+        self.setLayout(self.layout)
+
+    def alquilar(self):
+        print("Función para crear un préstamo")
+
+
+    def ver_prestamos(self):
+        print("Función para ver préstamos")
+        # Aquí puedes mostrar una lista de préstamos registrados
+
+    def devolver_libro(self):
+        print("Función para devolver un libro")
+        # Aquí puedes implementar la lógica para registrar la devolución de un libro
+
+
 # Ventana para gestionar libros (Añadir y Ver)
 class Biblioteca(QWidget):
     def __init__(self):
@@ -79,6 +116,9 @@ class Biblioteca(QWidget):
         self.boton_ver = QPushButton("Ver Libros")
         self.boton_ver.clicked.connect(self.ver_libros)  # Conectar acción
 
+        self.boton_prestamos = QPushButton("Prestamos")
+        self.boton_prestamos.clicked.connect(self.menu_prestamos)
+
         self.boton_csv = QPushButton("CSV")
         self.boton_csv.clicked.connect(self.abrir_ventana_csv)
 
@@ -90,7 +130,13 @@ class Biblioteca(QWidget):
         self.layout.addWidget(self.boton_ver)
         self.layout.addWidget(self.boton_graficos)
         self.layout.addWidget(self.boton_csv)
+        self.layout.addWidget(self.boton_prestamos)
         self.setLayout(self.layout)
+
+    def menu_prestamos(self):
+        self.prestamos = MenuPrestamos()
+        self.prestamos.show()
+
 
     def anadir_libro(self):
         self.formulario = FormularioLibro(self)
