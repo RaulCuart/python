@@ -1,0 +1,184 @@
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import sys\r\nfrom PyQt5.QtWidgets import *\r\nfrom Llibre import Llibre\r\n\r\nclass MenuPrincipal(QWidget):\r\n    def __init__(self):\r\n        super().__init__()\r\n        print()\r\n        self.setWindowTitle(\"Biblioteca\")\r\n        self.setGeometry(800, 300, 400, 400)\r\n        self.layout = QVBoxLayout()\r\n\r\n        self.boton_libros = QPushButton(\"Libros\")\r\n        self.boton_libros.clicked.connect(self.abrir_ventana_libros)\r\n\r\n        self.boton_muebles = QPushButton(\"Muebles\")\r\n        self.boton_muebles.clicked.connect(self.abrir_ventana_muebles)\r\n\r\n        self.layout.addWidget(self.boton_muebles)\r\n        self.layout.addWidget(self.boton_libros)\r\n        self.setLayout(self.layout)\r\n\r\n    def abrir_ventana_libros(self):\r\n        self.ventana_libros = Biblioteca()\r\n        self.ventana_libros.show()\r\n\r\n    def abrir_ventana_muebles(self):\r\n        self.ventana_muebles = Muebles()\r\n        self.ventana_muebles.show()\r\n\r\nclass Muebles(QWidget):\r\n    def __init__(self):\r\n        super().__init__()\r\n        self.setWindowTitle(\"Muebles\")\r\n        self.setGeometry(800, 300, 400, 400)\r\n        self.layout = QVBoxLayout()\r\n\r\n        self.boton_anadir_mueble = QPushButton(\"Añadir Mueble\")\r\n        self.boton_anadir_mueble.clicked.connect(self.anadir_mueble)\r\n\r\n        self.boton_ver_muebles = QPushButton(\"Ver Muebles\")\r\n        self.boton_ver_muebles.clicked.connect(self.ver_muebles)\r\n\r\n        self.layout.addWidget(self.boton_anadir_mueble)\r\n        self.layout.addWidget(self.boton_ver_muebles)\r\n        self.setLayout(self.layout)\r\n\r\n    def anadir_mueble(self):\r\n        QMessageBox.information(self, \"Añadir muebles\", \"Se ha pulsado el boton de añadir muebles\")\r\n\r\n    def ver_muebles(self):\r\n        QMessageBox.information(self,\"Ver muebles\", \"Se ha pulsado el boton de ver muebles\")\r\n\r\n# Ventana para gestionar libros (Añadir y Ver)\r\nclass Biblioteca(QWidget):\r\n    def __init__(self):\r\n        super().__init__()\r\n\r\n        self.libros = []\r\n        self.setWindowTitle(\"Gestión de Libros\")\r\n        self.setGeometry(800, 300, 400, 400)\r\n\r\n        # Crear layout\r\n        self.layout = QVBoxLayout()\r\n\r\n        # Botón para añadir libros (cambiamos 'añadir' por 'anadir' para evitar caracteres especiales)\r\n        self.boton_anadir = QPushButton(\"Añadir Libro\")\r\n        self.boton_anadir.clicked.connect(self.anadir_libro)  # Conectar acción\r\n\r\n        # Botón para ver libros\r\n        self.boton_ver = QPushButton(\"Ver Libros\")\r\n        self.boton_ver.clicked.connect(self.ver_libros)  # Conectar acción\r\n\r\n        self.boton_csv = QPushButton(\"CSV\")\r\n        self.boton_csv.clicked.connect(self.abrir_ventana_csv)\r\n\r\n        self.boton_graficos = QPushButton(\"Graficos\")\r\n        self.boton_graficos.clicked.connect(self.abrir_graficos)\r\n\r\n        # Añadir botones al layout\r\n        self.layout.addWidget(self.boton_anadir)\r\n        self.layout.addWidget(self.boton_ver)\r\n        self.layout.addWidget(self.boton_graficos)\r\n        self.layout.addWidget(self.boton_csv)\r\n        self.setLayout(self.layout)\r\n\r\n    def anadir_libro(self):\r\n        self.formulario = FormularioLibro(self)\r\n        self.formulario.show()\r\n\r\n    def ver_libros(self):\r\n        self.ventana_libros = VerLibros(self.libros)\r\n        self.ventana_libros.show()\r\n\r\n    def abrir_ventana_csv(self):\r\n        self.ventana_csv = Menu_CSV()\r\n        self.ventana_csv.show()\r\n\r\n    def abrir_graficos(self):\r\n        QMessageBox.information(self,\"Graficos\", \"Se ha pulsado el boton para ver los graficos\")\r\n\r\nclass VerLibros(QWidget):\r\n    def __init__(self, libros):\r\n        super().__init__()\r\n\r\n        self.libros = libros  # Guardamos la lista de libros\r\n        self.setWindowTitle(\"Lista de Libros\")\r\n        self.setGeometry(400, 100, 1400, 800)\r\n\r\n        # Crear layout\r\n        self.layout = QVBoxLayout()\r\n\r\n        # Crear un QListWidget para mostrar los libros\r\n        self.lista_libros = QListWidget()\r\n        self.lista_libros.addItems([str(libro) for libro in libros])  # Mostrar libros usando el __str__\r\n\r\n        # Conectar el evento de clic en un libro\r\n        self.lista_libros.itemClicked.connect(self.editar_libro)\r\n\r\n        # Añadir la lista al layout\r\n        self.layout.addWidget(self.lista_libros)\r\n        self.setLayout(self.layout)\r\n\r\n    def editar_libro(self, item):\r\n        # Buscar el libro que corresponde al item seleccionado\r\n        libro_seleccionado = next((libro for libro in self.libros if str(libro) == item.text()), None)\r\n\r\n        if libro_seleccionado:\r\n            # Mostrar el formulario de edición\r\n            self.formulario_editar = FormularioEditarLibro(libro_seleccionado, self)\r\n            self.formulario_editar.show()\r\n\r\nclass FormularioEditarLibro(QWidget):\r\n    def __init__(self, libro, ventana_libros):\r\n        super().__init__()\r\n\r\n        self.libro = libro\r\n        self.ventana_libros = ventana_libros  # Para actualizar la lista después de editar\r\n        self.setWindowTitle(f\"Editar {libro.nom}\")\r\n        self.setGeometry(400, 100, 400, 400)\r\n\r\n        # Crear layout\r\n        self.layout = QVBoxLayout()\r\n\r\n        # Campos de formulario prellenados con los valores actuales del libro\r\n        self.nom_input = QLineEdit(libro.nom)\r\n        self.autor_input = QLineEdit(libro.autor)\r\n        self.pagines_input = QLineEdit(libro.pagines)\r\n        self.genere_input = QLineEdit(libro.genere)\r\n        self.sinopsis_input = QLineEdit(libro.sinopsis)\r\n        self.dataPublicacio_input = QLineEdit(libro.dataPublicacio)\r\n        self.edicio_input = QLineEdit(libro.edicio)\r\n        self.enPrestec_input = QLineEdit(libro.enPrestec)\r\n        self.estanteria_input = QLineEdit(libro.estanteria)\r\n        self.fila_input = QLineEdit(libro.fila)\r\n        self.columna_input = QLineEdit(libro.columna)\r\n\r\n        # Añadir los campos al formulario\r\n        self.layout.addWidget(QLabel(\"Nombre:\"))\r\n        self.layout.addWidget(self.nom_input)\r\n        self.layout.addWidget(QLabel(\"Autor:\"))\r\n        self.layout.addWidget(self.autor_input)\r\n        self.layout.addWidget(QLabel(\"Paginas:\"))\r\n        self.layout.addWidget(self.pagines_input)\r\n        self.layout.addWidget(QLabel(\"Genero:\"))\r\n        self.layout.addWidget(self.genere_input)\r\n        self.layout.addWidget(QLabel(\"Sinopsis:\"))\r\n        self.layout.addWidget(self.sinopsis_input)\r\n        self.layout.addWidget(QLabel(\"Fecha de Publicacion:\"))\r\n        self.layout.addWidget(self.dataPublicacio_input)\r\n        self.layout.addWidget(QLabel(\"Edicion:\"))\r\n        self.layout.addWidget(self.edicio_input)\r\n        self.layout.addWidget(QLabel(\"En Prestamo:\"))\r\n        self.layout.addWidget(self.enPrestec_input)\r\n        self.layout.addWidget(QLabel(\"Estantería:\"))\r\n        self.layout.addWidget(self.estanteria_input)\r\n        self.layout.addWidget(QLabel(\"Fila:\"))\r\n        self.layout.addWidget(self.fila_input)\r\n        self.layout.addWidget(QLabel(\"Columna:\"))\r\n        self.layout.addWidget(self.columna_input)\r\n\r\n        # Botón para guardar cambios\r\n        self.boton_guardar = QPushButton(\"Guardar Cambios\")\r\n        self.boton_guardar.clicked.connect(self.guardar_cambios)\r\n\r\n        self.boton_borrar = QPushButton(\"Borrar Libro\")\r\n        self.boton_borrar.clicked.connect(self.borrar_libro)\r\n\r\n        self.layout.addWidget(self.boton_borrar)\r\n        self.layout.addWidget(self.boton_guardar)\r\n\r\n        self.setLayout(self.layout)\r\n\r\n    def borrar_libro(self):\r\n        self.ventana_libros.libros.remove(self.libro)\r\n        self.ventana_libros.lista_libros.clear()\r\n        self.ventana_libros.lista_libros.addItems([str(libro) for libro in self.ventana_libros.libros])\r\n        self.close()\r\n\r\n    def guardar_cambios(self):\r\n        # Actualizamos los campos del libro con los nuevos valores\r\n        self.libro.nom = self.nom_input.text()\r\n        self.libro.autor = self.autor_input.text()\r\n        self.libro.pagines = self.pagines_input.text()\r\n        self.libro.genere = self.genere_input.text()\r\n        self.libro.sinopsis = self.sinopsis_input.text()\r\n        self.libro.dataPublicacio = self.dataPublicacio_input.text()\r\n        self.libro.edicio = self.edicio_input.text()\r\n        self.libro.enPrestec = self.enPrestec_input.text()\r\n        self.libro.estanteria = self.estanteria_input.text()\r\n        self.libro.fila = self.fila_input.text()\r\n        self.libro.columna = self.columna_input.text()\r\n\r\n        # Actualizar la lista de libros\r\n        self.ventana_libros.lista_libros.clear()\r\n        self.ventana_libros.lista_libros.addItems([str(libro) for libro in self.ventana_libros.libros])\r\n\r\n        # Cerrar el formulario\r\n        self.close()\r\n\r\n\r\nclass Menu_CSV(QWidget):\r\n    def __init__(self):\r\n        super().__init__()\r\n        self.setWindowTitle(\"Menu Csv\")\r\n        self.setGeometry(800, 300, 400, 400)\r\n\r\nclass FormularioLibro(QWidget):\r\n    def __init__(self, biblioteca):\r\n        super().__init__()\r\n\r\n        self.setWindowTitle(\"Añadir Libro\")\r\n        self.setGeometry(800, 300, 400, 400)\r\n\r\n        # Referencia a la clase Biblioteca para agregar libros\r\n        self.biblioteca = biblioteca\r\n\r\n        # Crear layout\r\n        self.layout = QVBoxLayout()\r\n\r\n        # Campos para el formulario\r\n        self.nom_input = QLineEdit()\r\n        self.autor_input = QLineEdit()\r\n        self.pagines_input = QLineEdit()\r\n        self.genere_input = QLineEdit()\r\n        self.sinopsis_input = QLineEdit()\r\n        self.dataPublicacio_input = QLineEdit()\r\n        self.edicio_input = QLineEdit()\r\n        self.enPrestec_input = QLineEdit()\r\n        self.estanteria_input = QLineEdit()\r\n        self.fila_input = QLineEdit()\r\n        self.columna_input = QLineEdit()\r\n\r\n        # Añadir campos al formulario\r\n        self.layout.addWidget(QLabel(\"Nombre:\"))\r\n        self.layout.addWidget(self.nom_input)\r\n\r\n        self.layout.addWidget(QLabel(\"Autor:\"))\r\n        self.layout.addWidget(self.autor_input)\r\n\r\n        self.layout.addWidget(QLabel(\"Paginas:\"))\r\n        self.layout.addWidget(self.pagines_input)\r\n\r\n        self.layout.addWidget(QLabel(\"Genero:\"))\r\n        self.layout.addWidget(self.genere_input)\r\n\r\n        self.layout.addWidget(QLabel(\"Sinopsis:\"))\r\n        self.layout.addWidget(self.sinopsis_input)\r\n\r\n        self.layout.addWidget(QLabel(\"Fecha de Publicacion:\"))\r\n        self.layout.addWidget(self.dataPublicacio_input)\r\n\r\n        self.layout.addWidget(QLabel(\"Edicion:\"))\r\n        self.layout.addWidget(self.edicio_input)\r\n\r\n        self.layout.addWidget(QLabel(\"En Prestamo:\"))\r\n        self.layout.addWidget(self.enPrestec_input)\r\n\r\n        self.layout.addWidget(QLabel(\"Estantería:\"))\r\n        self.layout.addWidget(self.estanteria_input)\r\n\r\n        self.layout.addWidget(QLabel(\"Fila:\"))\r\n        self.layout.addWidget(self.fila_input)\r\n\r\n        self.layout.addWidget(QLabel(\"Columna:\"))\r\n        self.layout.addWidget(self.columna_input)\r\n\r\n        # Botón para guardar el libro\r\n        self.boton_guardar = QPushButton(\"Guardar Libro\")\r\n        self.boton_guardar.clicked.connect(self.guardar_libro)\r\n\r\n        self.layout.addWidget(self.boton_guardar)\r\n\r\n        self.setLayout(self.layout)\r\n\r\n    def guardar_libro(self):\r\n        nom = self.nom_input.text()\r\n        autor = self.autor_input.text()\r\n        pagines = self.pagines_input.text()\r\n        genere = self.genere_input.text()\r\n        sinopsis = self.sinopsis_input.text()\r\n        dataPublicacio = self.dataPublicacio_input.text()\r\n        edicio = self.edicio_input.text()\r\n        enPrestec = self.enPrestec_input.text()\r\n        estanteria = self.estanteria_input.text()\r\n        fila = self.fila_input.text()\r\n        columna = self.columna_input.text()\r\n\r\n        libro = Llibre(nom, autor, pagines, genere, sinopsis, dataPublicacio, edicio, enPrestec, estanteria, fila,columna)\r\n        self.biblioteca.libros.append(libro)\r\n\r\n        QMessageBox.information(self, \"Libro Guardado\", f\"Se guardó {libro.nom}\")\r\n\r\n        # Al enviar el formulario con el clear los campos se vacian por si quieres añadir un nuevo libro.\r\n        self.nom_input.clear()\r\n        self.autor_input.clear()\r\n        self.pagines_input.clear()\r\n        self.genere_input.clear()\r\n        self.sinopsis_input.clear()\r\n        self.dataPublicacio_input.clear()\r\n        self.edicio_input.clear()\r\n        self.enPrestec_input.clear()\r\n        self.estanteria_input.clear()\r\n        self.fila_input.clear()\r\n        self.columna_input.clear()\r\n\r\n\r\n# Bloque para ejecutar la aplicación correctamente\r\nif __name__ == \"__main__\":\r\n    app = QApplication(sys.argv)\r\n\r\n    # Asegurarse de que no se cierre la aplicación automáticamente\r\n    ventana = MenuPrincipal()\r\n    ventana.show()\r\n    sys.exit(app.exec_())\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main.py b/main.py
+--- a/main.py	(revision 8d83f9c1b36e4ce7ed0bb5148ccb02779ea614b1)
++++ b/main.py	(date 1741350636849)
+@@ -5,7 +5,6 @@
+ class MenuPrincipal(QWidget):
+     def __init__(self):
+         super().__init__()
+-        print()
+         self.setWindowTitle("Biblioteca")
+         self.setGeometry(800, 300, 400, 400)
+         self.layout = QVBoxLayout()
+@@ -51,6 +50,17 @@
+     def ver_muebles(self):
+         QMessageBox.information(self,"Ver muebles", "Se ha pulsado el boton de ver muebles")
+ 
++class MenuPrestamos(QWidget):
++    def __init__(self):
++        super().__init__()
++        self.setWindowTitle("Menu Prestamos")
++        self.setGeometry(800, 300, 400, 400)
++        self.layout = QVBoxLayout()
++        self.label = QPushButton("Gestión de Préstamos")
++        self.layout.addWidget(self.label)
++
++        self.setLayout(self.layout)
++
+ # Ventana para gestionar libros (Añadir y Ver)
+ class Biblioteca(QWidget):
+     def __init__(self):
+@@ -71,6 +81,9 @@
+         self.boton_ver = QPushButton("Ver Libros")
+         self.boton_ver.clicked.connect(self.ver_libros)  # Conectar acción
+ 
++        self.boton_prestamos = QPushButton("Prestamos")
++        self.boton_prestamos.clicked.connect(self.menu_prestamos)
++
+         self.boton_csv = QPushButton("CSV")
+         self.boton_csv.clicked.connect(self.abrir_ventana_csv)
+ 
+@@ -82,8 +95,14 @@
+         self.layout.addWidget(self.boton_ver)
+         self.layout.addWidget(self.boton_graficos)
+         self.layout.addWidget(self.boton_csv)
++        self.layout.addWidget(self.boton_prestamos)
+         self.setLayout(self.layout)
+ 
++    def menu_prestamos(self):
++        self.prestamos = MenuPrestamos()
++        self.prestamos.show()
++
++
+     def anadir_libro(self):
+         self.formulario = FormularioLibro(self)
+         self.formulario.show()
+Index: .idea/Biblioteca.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<module type=\"PYTHON_MODULE\" version=\"4\">\r\n  <component name=\"NewModuleRootManager\">\r\n    <content url=\"file://$MODULE_DIR$\">\r\n      <excludeFolder url=\"file://$MODULE_DIR$/.venv\" />\r\n    </content>\r\n    <orderEntry type=\"jdk\" jdkName=\"Python 3.10 (python)\" jdkType=\"Python SDK\" />\r\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\r\n  </component>\r\n</module>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/Biblioteca.iml b/.idea/Biblioteca.iml
+--- a/.idea/Biblioteca.iml	(revision 8d83f9c1b36e4ce7ed0bb5148ccb02779ea614b1)
++++ b/.idea/Biblioteca.iml	(date 1741349246909)
+@@ -4,7 +4,7 @@
+     <content url="file://$MODULE_DIR$">
+       <excludeFolder url="file://$MODULE_DIR$/.venv" />
+     </content>
+-    <orderEntry type="jdk" jdkName="Python 3.10 (python)" jdkType="Python SDK" />
++    <orderEntry type="jdk" jdkName="Python 3.12 (Biblioteca)" jdkType="Python SDK" />
+     <orderEntry type="sourceFolder" forTests="false" />
+   </component>
+ </module>
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"9f89edc8-b5b9-4083-a0eb-eed088ef63fd\" name=\"Changes\" comment=\"\">\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/Biblioteca.iml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/modules.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/vcs.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\"><![CDATA[{\r\n  \"associatedIndex\": 8\r\n}]]></component>\r\n  <component name=\"ProjectId\" id=\"2tzIUW8qsTODoMHIK7phnPYWNcc\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"git-widget-placeholder\": \"master\",\r\n    \"ignore.virus.scanning.warn.message\": \"true\",\r\n    \"nodejs_package_manager_path\": \"npm\",\r\n    \"vue.rearranger.settings.migration\": \"true\"\r\n  }\r\n}]]></component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-PY-243.25659.43\" />\r\n        <option value=\"bundled-python-sdk-181015f7ab06-4df51de95216-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.25659.43\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"9f89edc8-b5b9-4083-a0eb-eed088ef63fd\" name=\"Changes\" comment=\"\" />\r\n      <created>1741348492490</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1741348492490</updated>\r\n      <workItem from=\"1741348493329\" duration=\"108000\" />\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 8d83f9c1b36e4ce7ed0bb5148ccb02779ea614b1)
++++ b/.idea/workspace.xml	(date 1741350408480)
+@@ -1,21 +1,41 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
++  <component name="AutoImportSettings">
++    <option name="autoReloadType" value="SELECTIVE" />
++  </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="9f89edc8-b5b9-4083-a0eb-eed088ef63fd" name="Changes" comment="">
+-      <change afterPath="$PROJECT_DIR$/.idea/Biblioteca.iml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++    <list default="true" id="9f89edc8-b5b9-4083-a0eb-eed088ef63fd" name="Changes" comment="subo proyecto">
++      <change beforePath="$PROJECT_DIR$/.idea/Biblioteca.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Biblioteca.iml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+     <option name="LAST_RESOLUTION" value="IGNORE" />
++  </component>
++  <component name="FileTemplateManagerImpl">
++    <option name="RECENT_TEMPLATES">
++      <list>
++        <option value="Python Script" />
++      </list>
++    </option>
+   </component>
+   <component name="Git.Settings">
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+   </component>
++  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
++  "lastFilter": {
++    "state": "OPEN",
++    "assignee": "RaulCuart"
++  }
++}]]></component>
++  <component name="GithubPullRequestsUISettings"><![CDATA[{
++  "selectedUrlAndAccountId": {
++    "url": "https://github.com/RaulCuart/python.git",
++    "accountId": "b115dae9-a7ae-4dbc-838c-b683d9fcfe02"
++  }
++}]]></component>
+   <component name="ProjectColorInfo"><![CDATA[{
+   "associatedIndex": 8
+ }]]></component>
+@@ -27,9 +47,14 @@
+   </component>
+   <component name="PropertiesComponent"><![CDATA[{
+   "keyToString": {
++    "Python.main.executor": "Run",
+     "RunOnceActivity.ShowReadmeOnStart": "true",
+     "git-widget-placeholder": "master",
+     "ignore.virus.scanning.warn.message": "true",
++    "node.js.detected.package.eslint": "true",
++    "node.js.detected.package.tslint": "true",
++    "node.js.selected.package.eslint": "(autodetect)",
++    "node.js.selected.package.tslint": "(autodetect)",
+     "nodejs_package_manager_path": "npm",
+     "vue.rearranger.settings.migration": "true"
+   }
+@@ -50,11 +75,27 @@
+       <option name="number" value="Default" />
+       <option name="presentableId" value="Default" />
+       <updated>1741348492490</updated>
+-      <workItem from="1741348493329" duration="108000" />
++      <workItem from="1741348493329" duration="1904000" />
++    </task>
++    <task id="LOCAL-00001" summary="subo proyecto">
++      <option name="closed" value="true" />
++      <created>1741348823553</created>
++      <option name="number" value="00001" />
++      <option name="presentableId" value="LOCAL-00001" />
++      <option name="project" value="LOCAL" />
++      <updated>1741348823553</updated>
+     </task>
++    <option name="localTasksCounter" value="2" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+     <option name="version" value="3" />
+   </component>
++  <component name="VcsManagerConfiguration">
++    <MESSAGE value="subo proyecto" />
++    <option name="LAST_COMMIT_MESSAGE" value="subo proyecto" />
++  </component>
++  <component name="com.intellij.coverage.CoverageDataManagerImpl">
++    <SUITE FILE_PATH="coverage/Biblioteca$main.coverage" NAME="main Coverage Results" MODIFIED="1741350380910" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
++  </component>
+ </project>
+\ No newline at end of file

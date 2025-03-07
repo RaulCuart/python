@@ -5,7 +5,6 @@ from Llibre import Llibre
 class MenuPrincipal(QWidget):
     def __init__(self):
         super().__init__()
-        print()
         self.setWindowTitle("Biblioteca")
         self.setGeometry(800, 300, 400, 400)
         self.layout = QVBoxLayout()
@@ -51,6 +50,17 @@ class Muebles(QWidget):
     def ver_muebles(self):
         QMessageBox.information(self,"Ver muebles", "Se ha pulsado el boton de ver muebles")
 
+class MenuPrestamos(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Menu Prestamos")
+        self.setGeometry(800, 300, 400, 400)
+        self.layout = QVBoxLayout()
+        self.label = QPushButton("Gestión de Préstamos")
+        self.layout.addWidget(self.label)
+
+        self.setLayout(self.layout)
+
 # Ventana para gestionar libros (Añadir y Ver)
 class Biblioteca(QWidget):
     def __init__(self):
@@ -71,6 +81,9 @@ class Biblioteca(QWidget):
         self.boton_ver = QPushButton("Ver Libros")
         self.boton_ver.clicked.connect(self.ver_libros)  # Conectar acción
 
+        self.boton_prestamos = QPushButton("Prestamos")
+        self.boton_prestamos.clicked.connect(self.menu_prestamos)
+
         self.boton_csv = QPushButton("CSV")
         self.boton_csv.clicked.connect(self.abrir_ventana_csv)
 
@@ -82,7 +95,13 @@ class Biblioteca(QWidget):
         self.layout.addWidget(self.boton_ver)
         self.layout.addWidget(self.boton_graficos)
         self.layout.addWidget(self.boton_csv)
+        self.layout.addWidget(self.boton_prestamos)
         self.setLayout(self.layout)
+
+    def menu_prestamos(self):
+        self.prestamos = MenuPrestamos()
+        self.prestamos.show()
+
 
     def anadir_libro(self):
         self.formulario = FormularioLibro(self)
