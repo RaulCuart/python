@@ -49,7 +49,7 @@ class Muebles(QWidget):
         self.setLayout(self.layout)
 
     def anadir_mueble(self):
-        #QMessageBox.information(self, "Añadir muebles", "Se ha pulsado el boton de añadir muebles")
+
         self.formulario = FormularioMobiliario(self)
         self.formulario.show()
 
@@ -94,7 +94,7 @@ class MenuPrestamos(QWidget):
         self.biblioteca.prestamos = self.prestamos
 
 class VerPrestamos(QWidget):
-    def __init__(self, prestamos, menu_prestamos): #añadimos menu_prestamos para poder actualizar la lista
+    def __init__(self, prestamos, menu_prestamos):
         super().__init__()
 
         self.prestamos = prestamos
@@ -106,7 +106,7 @@ class VerPrestamos(QWidget):
 
         self.lista_prestamos = QListWidget()
         self.lista_prestamos.addItems([str(prestamo) for prestamo in prestamos])
-        self.lista_prestamos.itemClicked.connect(self.editar_prestamo) #conectar evento
+        self.lista_prestamos.itemClicked.connect(self.editar_prestamo)
 
         self.layout.addWidget(self.lista_prestamos)
         self.setLayout(self.layout)
@@ -219,7 +219,7 @@ class FormularioPrestamo(QWidget):
         self.close()
         self.gestion_prestamos.biblioteca.prestamos = self.prestamos
 
-# Ventana para gestionar libros (Añadir y Ver)
+#Ventana principal donde puedes acceder a los Muebles y Libros
 class Biblioteca(QWidget):
     def __init__(self):
         super().__init__()
@@ -230,23 +230,17 @@ class Biblioteca(QWidget):
         self.setGeometry(800, 300, 400, 400)
 
 
-        # Crear layout
         self.layout = QVBoxLayout()
 
-        # Botón para añadir libros (cambiamos 'añadir' por 'anadir' para evitar caracteres especiales)
         self.boton_anadir = QPushButton("Añadir Libro")
         self.boton_anadir.clicked.connect(self.anadir_libro)  # Conectar acción
 
-        # Botón para ver libros
         self.boton_ver = QPushButton("Ver Libros")
         self.boton_ver.clicked.connect(self.ver_libros)  # Conectar acción
 
         self.boton_prestamos = QPushButton("Prestamos")
         self.boton_prestamos.clicked.connect(self.menu_prestamos)
 
-
-
-        # Añadir botones al layout
         self.layout.addWidget(self.boton_anadir)
         self.layout.addWidget(self.boton_ver)
         self.layout.addWidget(self.boton_prestamos)
@@ -269,30 +263,29 @@ class VerLibros(QWidget):
     def __init__(self, libros):
         super().__init__()
 
-        self.libros = libros  # Guardamos la lista de libros
+        self.libros = libros
         self.setWindowTitle("Lista de Libros")
         self.setGeometry(400, 100, 1400, 800)
 
-        # Crear layout
+
         self.layout = QVBoxLayout()
 
-        # Crear un QListWidget para mostrar los libros
         self.lista_libros = QListWidget()
-        self.lista_libros.addItems([str(libro) for libro in libros])  # Mostrar libros usando el __str__
+        self.lista_libros.addItems([str(libro) for libro in libros])
 
-        # Conectar el evento de clic en un libro
+
         self.lista_libros.itemClicked.connect(self.editar_libro)
 
-        # Añadir la lista al layout
+
         self.layout.addWidget(self.lista_libros)
         self.setLayout(self.layout)
 
     def editar_libro(self, item):
-        # Buscar el libro que corresponde al item seleccionado
+
         libro_seleccionado = next((libro for libro in self.libros if str(libro) == item.text()), None)
 
         if libro_seleccionado:
-            # Mostrar el formulario de edición
+
             self.formulario_editar = FormularioEditarLibro(libro_seleccionado, self)
             self.formulario_editar.show()
 
@@ -305,10 +298,10 @@ class FormularioEditarLibro(QWidget):
         self.setWindowTitle(f"Editar {libro.nom}")
         self.setGeometry(400, 100, 400, 400)
 
-        # Crear layout
+
         self.layout = QVBoxLayout()
 
-        # Campos de formulario prellenados con los valores actuales del libro
+
         self.nom_input = QLineEdit(libro.nom)
         self.autor_input = QLineEdit(libro.autor)
         self.pagines_input = QLineEdit(libro.pagines)
@@ -321,7 +314,7 @@ class FormularioEditarLibro(QWidget):
         self.fila_input = QLineEdit(libro.fila)
         self.columna_input = QLineEdit(libro.columna)
 
-        # Añadir los campos al formulario
+
         self.layout.addWidget(QLabel("Nombre:"))
         self.layout.addWidget(self.nom_input)
         self.layout.addWidget(QLabel("Autor:"))
@@ -343,7 +336,7 @@ class FormularioEditarLibro(QWidget):
         self.layout.addWidget(QLabel("Columna:"))
         self.layout.addWidget(self.columna_input)
 
-        # Botón para guardar cambios
+
         self.boton_guardar = QPushButton("Guardar Cambios")
         self.boton_guardar.clicked.connect(self.guardar_cambios)
 
@@ -362,7 +355,7 @@ class FormularioEditarLibro(QWidget):
         self.close()
 
     def guardar_cambios(self):
-        # Actualizamos los campos del libro con los nuevos valores
+
         self.libro.nom = self.nom_input.text()
         self.libro.autor = self.autor_input.text()
         self.libro.pagines = self.pagines_input.text()
@@ -374,11 +367,11 @@ class FormularioEditarLibro(QWidget):
         self.libro.fila = self.fila_input.text()
         self.libro.columna = self.columna_input.text()
 
-        # Actualizar la lista de libros
+
         self.ventana_libros.lista_libros.clear()
         self.ventana_libros.lista_libros.addItems([str(libro) for libro in self.ventana_libros.libros])
 
-        # Cerrar el formulario
+
         self.close()
 
 class FormularioEditarMueble(QWidget):
@@ -386,20 +379,17 @@ class FormularioEditarMueble(QWidget):
         super().__init__()
 
         self.mueble = mueble
-        self.ventana_muebles = ventana_muebles  # Para actualizar la lista después de editar
+        self.ventana_muebles = ventana_muebles
         self.setWindowTitle(f"Editar {mueble.nom}")
         self.setGeometry(400, 100, 400, 400)
 
-        # Crear layout
         self.layout = QVBoxLayout()
 
-        # Campos de formulario prellenados con los valores actuales del libro
         self.nom_input = QLineEdit(mueble.nom)
         self.cuantitat_input = QLineEdit(mueble.cuantitat)
         self.tamany_input = QLineEdit(mueble.tamany)
         self.pes_input = QLineEdit(mueble.pes)
 
-        # Añadir los campos al formulario
         self.layout.addWidget(QLabel("Nombre:"))
         self.layout.addWidget(self.nom_input)
         self.layout.addWidget(QLabel("Cantidad:"))
@@ -409,7 +399,6 @@ class FormularioEditarMueble(QWidget):
         self.layout.addWidget(QLabel("Peso:"))
         self.layout.addWidget(self.pes_input)
 
-        # Botón para guardar cambios
         self.boton_guardar = QPushButton("Guardar Cambios")
         self.boton_guardar.clicked.connect(self.guardar_cambios)
 
@@ -428,17 +417,17 @@ class FormularioEditarMueble(QWidget):
         self.close()
 
     def guardar_cambios(self):
-        # Actualizamos los campos del mueble con los nuevos valores
+
         self.mueble.nom = self.nom_input.text()
         self.mueble.cuantitat = self.cuantitat_input.text()
         self.mueble.tamany = self.tamany_input.text()
         self.mueble.pes = self.pes_input.text()
 
-        # Actualizar la lista de muebles
+
         self.ventana_muebles.lista_muebles.clear()
         self.ventana_muebles.lista_muebles.addItems([str(mueble) for mueble in self.ventana_muebles.muebles])
 
-        # Cerrar el formulario
+
         self.close()
 
 
@@ -449,13 +438,10 @@ class FormularioLibro(QWidget):
         self.setWindowTitle("Añadir Libro")
         self.setGeometry(800, 300, 400, 400)
 
-        # Referencia a la clase Biblioteca para agregar libros
         self.biblioteca = biblioteca
 
-        # Crear layout
         self.layout = QVBoxLayout()
 
-        # Campos para el formulario
         self.nom_input = QLineEdit()
         self.autor_input = QLineEdit()
         self.pagines_input = QLineEdit()
@@ -468,7 +454,6 @@ class FormularioLibro(QWidget):
         self.fila_input = QLineEdit()
         self.columna_input = QLineEdit()
 
-        # Añadir campos al formulario
         self.layout.addWidget(QLabel("Nombre:"))
         self.layout.addWidget(self.nom_input)
 
@@ -499,7 +484,6 @@ class FormularioLibro(QWidget):
         self.layout.addWidget(QLabel("Columna:"))
         self.layout.addWidget(self.columna_input)
 
-        # Botón para guardar el libro
         self.boton_guardar = QPushButton("Guardar Libro")
         self.boton_guardar.clicked.connect(self.guardar_libro)
 
@@ -525,7 +509,7 @@ class FormularioLibro(QWidget):
 
         QMessageBox.information(self, "Libro Guardado", f"Se guardó {libro.nom}")
 
-        # Al enviar el formulario con el clear los campos se vacian por si quieres añadir un nuevo libro.
+
         self.nom_input.clear()
         self.autor_input.clear()
         self.pagines_input.clear()
@@ -545,19 +529,18 @@ class FormularioMobiliario(QWidget):
         self.setWindowTitle("Añadir Muebles")
         self.setGeometry(800, 300, 400, 400)
 
-        # Referencia a la clase mueble para agregar muebles
+
         self.muebles = muebles
 
-        # Crear layout
+
         self.layout = QVBoxLayout()
 
-        # Campos para el formulario
+
         self.nom_input = QLineEdit()
         self.cuantitat_input = QLineEdit()
         self.tamany_input = QLineEdit()
         self.pes_input = QLineEdit()
 
-        # Añadir campos al formulario
         self.layout.addWidget(QLabel("Nombre:"))
         self.layout.addWidget(self.nom_input)
 
@@ -571,7 +554,6 @@ class FormularioMobiliario(QWidget):
         self.layout.addWidget(self.pes_input)
 
 
-        # Botón para guardar el mueble
         self.boton_guardar = QPushButton("Guardar Mueble")
         self.boton_guardar.clicked.connect(self.guardar_mueble)
 
@@ -590,7 +572,6 @@ class FormularioMobiliario(QWidget):
 
         QMessageBox.information(self, "Mueble Guardado", f"Se guardó {mueble.nom}")
 
-        # Al enviar el formulario con el clear los campos se vacian por si quieres añadir un nuevo libro.
         self.nom_input.clear()
         self.cuantitat_input.clear()
         self.tamany_input.clear()
@@ -600,39 +581,38 @@ class VerMuebles(QWidget):
     def __init__(self, muebles):
         super().__init__()
 
-        self.muebles = muebles  # Guardamos la lista de muebles
+        self.muebles = muebles
         self.setWindowTitle("Lista de Muebles")
         self.setGeometry(400, 100, 1400, 800)
 
-        # Crear layout
+
         self.layout = QVBoxLayout()
 
-        # Crear un QListWidget para mostrar los libros
         self.lista_muebles = QListWidget()
         self.lista_muebles.addItems([str(mueble) for mueble in muebles])  # Mostrar muebles usando el __str__
 
-        # Conectar el evento de clic en un libro
+
         self.lista_muebles.itemClicked.connect(self.editar_muebles)
 
-        # Añadir la lista al layout
+
         self.layout.addWidget(self.lista_muebles)
         self.setLayout(self.layout)
 
     def editar_muebles(self, item):
-        # Buscar el mueble que corresponde al item seleccionado
+
         mueble_seleccionado = next((mueble for mueble in self.muebles if str(mueble) == item.text()), None)
 
         if mueble_seleccionado:
-            # Mostrar el formulario de edición
+
             self.formulario_editar = FormularioEditarMueble(mueble_seleccionado, self)
             self.formulario_editar.show()
 
 
-# Bloque para ejecutar la aplicación correctamente
+#Ejecuta la aplicación
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
-    # Asegurarse de que no se cierre la aplicación automáticamente
+    #Código que hace que la aplicacion no se cierre por si sola
     ventana = MenuPrincipal()
     ventana.show()
     sys.exit(app.exec_())
