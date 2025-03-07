@@ -226,7 +226,6 @@ class FormularioEditarLibro(QWidget):
         # Cerrar el formulario
         self.close()
 
-
 class Menu_CSV(QWidget):
     def __init__(self):
         super().__init__()
