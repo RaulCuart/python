@@ -5,7 +5,6 @@ from Llibre import Llibre
 class MenuPrincipal(QWidget):
     def __init__(self):
         super().__init__()
-        print()
         self.setWindowTitle("Biblioteca")
         self.setGeometry(800, 300, 400, 400)
         self.layout = QVBoxLayout()
